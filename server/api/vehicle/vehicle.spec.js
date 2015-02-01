@@ -31,8 +31,9 @@ describe('test Vehicle CRUD', function() {
         db.on('error', function() {
             console.log('Error connecting to database');
         }).should.not.throw('DB connection failed');
-
-        //console.log('run before all test...'); 
+        Vehicle.remove({}, function(err) {
+            if (err) should.fail;
+        })
     });
     after(function() {
         db.close();
@@ -52,13 +53,18 @@ describe('test Vehicle CRUD', function() {
                     estimated: '93200'
                 }
             });
-            vehicle.save(function(err, product, count) {
+            vehicle.save(function(err, savedVehicle, count) {
                 (err === null).should.be.true;
                 should(count).equal(1);
+                should(savedVehicle).not.equal.null;
+                //                console.log("savedVehicle.description() = " + savedVehicle.description());
 
-                Vehicle.count({}, function(err, count) {
+
+                Vehicle.findOne({
+                    name: 'Element'
+                }, function(err, veh) {
                     if (err) should.fail;
-                    should(count).equal(1);
+                    console.log("veh.description() = " + veh.description());
                 });
 
             });
@@ -67,27 +73,45 @@ describe('test Vehicle CRUD', function() {
 
     describe('update a vehicle', function() {
         it('should be updating', function() {
-            Vehicle.update({name:'Element'},{'odometer.current': '10000'}, function(err, num, raw){
-              if(err) should.fail;
-              should(num).equal(1);
-             // console.log("Updated result: " + raw);
-            });
+            Vehicle.update({
+                name: 'Element'
+            }, {
+                'odometer.current': '10000'
+            }, function(err, num, raw) {
+                if (err) should.fail;
+                //should(num).equal(1);
+                // console.log("Updated result: " + raw);
+
                 Vehicle.find({
-                    name: /Element/ 
+                    name: /Element/
                 }, function(err, vehicle) {
                     if (err) should.fail;
-                  //  console.log("Query vehicle: " + vehicle);
+                    should(vehicle[0].odometer.current).equal(10000);
                 });
+            });
+        });
+    });
+    describe('get description', function() {
+        it('should be the model description', function() {
+            Vehicle.findOne({
+                name: 'Element'
+            }, function(err, vehicle) {
+                if (err) should.fail;
+                should(vehicle.description()).not.be.undefined
+                console.log(vehicle.description());
+            });
         });
     });
 
     describe('deleting', function() {
         it('should be deleting', function() {
-            vehicle.remove({name:'Element'},function(err) {
+            vehicle.remove({
+                name: 'Element'
+            }, function(err) {
                 if (err) should.fail;
                 console.log('run delete test...');
-                Vehicle.count({},function(err,count){
-                  should(count).equal(0);
+                Vehicle.count({}, function(err, count) {
+                    should(count).equal(0);
                 });
 
             });

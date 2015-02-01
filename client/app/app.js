@@ -1,17 +1,17 @@
 'use strict';
 
 angular.module('maintainItApp', [
-  'ngCookies',
-  'ngResource',
-  'ngSanitize',
-  'ngRoute',
-  'ui.bootstrap'
+    'ngCookies',
+    'ngResource',
+    'ngSanitize',
+    'ngRoute',
+    'ui.bootstrap'
 ])
-  .config(function ($routeProvider, $locationProvider) {
-    $routeProvider
-      .otherwise({
-        redirectTo: '/'
-      });
+    .config(function($routeProvider, $locationProvider) {
+        $routeProvider
+            .otherwise({
+                redirectTo: '/'
+            });
 
-    $locationProvider.html5Mode(true);
-  });
+        $locationProvider.html5Mode(true);
+    });
